@@ -1,2 +1,2 @@
 Zde adresar baliku pojmenovaneho dle prijmeni 
-v nem tridu s programem.
+v nem tridu s programem ulohy 15 nebo 16 (dle vyberu) ze souboru Ulohy03.
