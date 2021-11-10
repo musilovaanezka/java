@@ -14,33 +14,43 @@ public class Prvocislo {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        int cislo;
+        boolean opakovat = true;
+       
+        do {
             System.out.println("Cislo k testu:");
-            int cislo = sc.nextInt();
+            cislo = sc.nextInt();
             
-            int delitel1 = 2; 
-            while(cislo % delitel1 != 0) {
-                if (cislo % delitel1 == 0) {
-                    System.out.println("Cislo neni prvocislo");
-                } else if (delitel1 == cislo) {
-                    System.out.println("Cislo je prvocislo");  
-                } else { 
-                    delitel1++;
-                    System.out.println()
+            //ukonceni cyklu po nalezeni prvniho delitele
+            int delitel1 = 1; 
+            do {
+                delitel1++;
+                if (cislo == delitel1) {
+                   System.out.println("Cislo je prvocislo"); 
+                } else {
+                    if (cislo % delitel1 == 0)
+                       System.out.format("%n Cislo neni prvocislo %n Cislo je delitelne napr. cislem %d %n" ,delitel1);
                 }
-                
+         
+            } while (cislo % delitel1 != 0);
+
+            //testovani vsech potencialnich delitelu
+            for (int delitel2 = 2; delitel2 < cislo; delitel2++) {
+                if (cislo % delitel2 == 0){
+                    System.out.format("%n Cislo neni prvocislo %n Cislo je delitelne cislem %d %n" ,delitel2);
+                } else if (delitel2 == cislo) {
+                    System.out.println("Cislo je prvocislo");
+                } 
+            }
+
+                    
+            //opakovani pro nove cislo
+            System.out.println("Opakovat? a/n");
+            String odpoved = sc.next();
+            if (odpoved.equals("n")) {
+                opakovat = false;
             }
             
-            
-           // do { 
-             //   if (cislo % delitel1 == 0) {
-               //     System.out.format("%n Cislo neni prvocislo %n Cislo je delitelne napr. cislem %d %n" ,delitel1);
-                //} else if (cislo == delitel1){
-                 //   System.out.println("Cislo je prvocislo");
-                //} else {
-                  //  System.out.println((cislo % delitel1));
-                    //delitel1++;  
-              //  }           
-            //} while (cislo % delitel1 != 0);
+        } while (opakovat == true);
     }
-
 }
