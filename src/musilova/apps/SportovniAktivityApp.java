@@ -25,8 +25,8 @@ public class SportovniAktivityApp {
     private static final List<Uzivatel> users = new ArrayList<Uzivatel>();
 
     private static final Scanner sc = new Scanner(System.in);
-    private static ResourceBundle rbCz = ResourceBundle.getBundle("musilova.props.popiskyCz", new Locale("cs", "CZ"));
-    private static ResourceBundle rbEn = ResourceBundle.getBundle("musilova.props.popiskyEn", Locale.UK);
+    private static final ResourceBundle rbCz = ResourceBundle.getBundle("musilova.props.popiskyCz", new Locale("cs", "CZ"));
+    private static final ResourceBundle rbEn = ResourceBundle.getBundle("musilova.props.popiskyEn", Locale.UK);
     private static ResourceBundle rbAct = rbEn;
 
     /**
@@ -40,7 +40,7 @@ public class SportovniAktivityApp {
             volba = nactiVolbu();
             konecProgramu = obsluzVolbu0(volba);
             if (konecProgramu) {
-                System.exit(0);
+                System.exit(0); // lepsi by bylo nastavit konecProgramu na false :)
             }
         } while (currentUser == null);
         do {
@@ -58,7 +58,7 @@ public class SportovniAktivityApp {
     }
 
     private static void vypisMenu1() {
-        System.out.println(rbAct.getString("ActFile") + currentUser.getUserFile().toString());
+        System.out.println(rbAct.getString("ActFile") + currentUser.getUserFile().toString()); // neosetrena vyjimka, kdyz je user null
         System.out.println("1 - " + rbAct.getString("NewUser"));
         System.out.println("2 - " + rbAct.getString("LoadUser"));
         System.out.println("3 - " + rbAct.getString("NewActivity"));
@@ -257,7 +257,7 @@ public class SportovniAktivityApp {
     }
 
     private static void vypisDleKonkretnihoData() {
-        System.out.println(rbAct.getString("TodaysAcitivities"));
+        System.out.println(rbAct.getString("TodaysActivities"));
         System.out.println(rbAct.getString("YesNo"));
         int volba = nactiVolbu();
         try {
@@ -285,9 +285,9 @@ public class SportovniAktivityApp {
 
     private static void vypisDleAktivity() {
         System.out.println(rbAct.getString(
-                "ByWhichActivity"
+                "ByWhichActivity")
                 + "1 - " + rbAct.getString("Act1")
-                + "2 - " + rbAct.getString("Act2")));
+                + "2 - " + rbAct.getString("Act2"));
         String name = "";
         switch (nactiVolbu()) {
             case 1 ->
@@ -314,7 +314,7 @@ public class SportovniAktivityApp {
     private static void vyspiDleRozmeziAAktivity() {
         System.out.println(rbAct.getString("StartDate"));
         System.out.println(rbAct.getString("EndDate"));
-        System.out.println(rbAct.getString("ByWhichAcitivity")
+        System.out.println(rbAct.getString("ByWhichActivity")
                 + "1 -" + rbAct.getString("Act1")
                 + "2 -" + rbAct.getString("Act2"));
         String name = "";

@@ -18,7 +18,7 @@ public interface Aktivita {
      * @return int kcal spalene v prubehu aktivity
      */
     public static double kcalHByBPM(double minuty, int bpm, Uzivatel user){
-        double kcal = 0;
+        double kcal;
         switch (user.getPohlavi()) {
             case ZENA:
                 kcal = minuty * (0.4472*user.getVyska() - 0.1263*user.getVaha() + 0.074*user.getVek() - 20.4022) / 4.184;
