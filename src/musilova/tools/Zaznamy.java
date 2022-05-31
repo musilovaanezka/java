@@ -42,7 +42,13 @@ public class Zaznamy {
         }
     }
 
-    // cteni ze souboru
+    /**
+     * cteni vsech zaznamu v souboru
+     * @param Uzivatel user
+     * @return List String radky 
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
     public static List<String> cteniVsech(Uzivatel user) throws FileNotFoundException, IOException {
         List<String> lines = new ArrayList<String>();
         try (BufferedReader br = new BufferedReader(new FileReader(user.getUserFile()))) {

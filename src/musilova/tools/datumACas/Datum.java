@@ -39,11 +39,11 @@ public class Datum {
         this.rok = today.getYear();
     }
     /**
-     * Creates date from
-     * @param d
-     * @param m
-     * @param r
-     * @return 
+     * Tvorba data dle dne, mecise a roku
+     * @param day int 
+     * @param month int
+     * @param year int
+     * @return Datum date
      */
     public static Datum getInstance(int d, int m, int r) {
         if (d > 31 || d < 1 || m > 12 || m < 1) {
@@ -62,19 +62,41 @@ public class Datum {
 
         return new Datum(d, m, r);
     }
-
+    /**
+     * vypocet veku od narozenin 
+     * @param Birthday 
+     * @return vek  
+     */
     public int vek(LocalDate narozeniny) {
         return Period.between(narozeniny, today).getYears();
     }
-
+    /**
+     * vypocet veku od dne narozeni
+     * @param den
+     * @param mesic
+     * @param rok
+     * @return vek 
+     */
     public int vek(int den, int mesic, int rok) {
         return vek(prevod(den, mesic, rok));
     }
-
+    
+    /**
+     * tvorba instance tridy LocalDate z dne, mesice a roku
+     * @param den
+     * @param mesic
+     * @param rok
+     * @return LocalDate
+     */
     public static LocalDate prevod(int den, int mesic, int rok) {
         return LocalDate.of(rok, mesic, den);
         
     }
+    /**
+     * instance tridz LocalDate z instance tridy Datum
+     * @param datum
+     * @return LocalDate
+     */
     public static LocalDate prevod(Datum d) {
         return prevod(d.den, d.mesic, d.rok);
     }
@@ -85,10 +107,6 @@ public class Datum {
     @Override
     public String toString() {
         return "" + den + "." + mesic + "." + rok + ";";
-    }
-    
-    public static void main(String[] args) {
-        System.out.println(today.getMonthValue());
     }
     
 }
