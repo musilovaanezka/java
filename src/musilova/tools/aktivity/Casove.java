@@ -65,7 +65,7 @@ public class Casove implements musilova.tools.Aktivita{
     /**
      * prepsana metoda toString()
      * urcena pro zapis do souboru
-     * @return String Casoce;minuty;prumerna tepova frekvence;user.toString()
+     * @return String Casove;minuty;prumerna tepova frekvence;user.toString()
      */
     @Override
     public String toString() {

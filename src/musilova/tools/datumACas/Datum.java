@@ -30,12 +30,21 @@ public class Datum {
         this.mesic = mesic;
         this.rok = rok;
     }
+    /**
+     * Creates todays date 
+     */
     public Datum() {
         this.den = today.getDayOfMonth();
         this.mesic = today.getMonthValue();
         this.rok = today.getYear();
     }
-
+    /**
+     * Creates date from
+     * @param d
+     * @param m
+     * @param r
+     * @return 
+     */
     public static Datum getInstance(int d, int m, int r) {
         if (d > 31 || d < 1 || m > 12 || m < 1) {
             throw new IllegalArgumentException("jeden nebo vice parametru byly zadany neplatne");

@@ -7,10 +7,12 @@ package musilova.tools;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Scanner;
 
 /**
  *
@@ -18,7 +20,6 @@ import java.nio.file.StandardOpenOption;
  */
 public class Uzivatel {
 
-    private static int IDs = 1;
 
     private final int vek;
     private double vaha;
@@ -33,6 +34,16 @@ public class Uzivatel {
      */
     public static enum Pohlavi {
         ZENA, MUZ, JINE;
+    }
+    private Uzivatel(File file, String zahlavi) {
+        String[] data = zahlavi.split(";");
+        this.vek = Integer.parseInt(data[0]);
+        this.vaha = Double.parseDouble(data[1]);
+        this.vyska = Integer.parseInt(data[2]);
+        this.pohlavi = Pohlavi.valueOf(data[3]);
+        this.BMR = vypocetBMR();
+        this.id = Integer.parseInt(file.getName().split("_")[1].split("\\.")[0]);
+        this.userFile = file;
     }
 
     private Uzivatel(int vek, double vaha, int vyska, Pohlavi pohlavi, File adr) throws IOException, InterruptedException {
@@ -53,10 +64,41 @@ public class Uzivatel {
         for (File f : files) {
             String[] strparts = f.getPath().split("_");
             String s = strparts[strparts.length - 1];
-            int i = (Integer.parseInt("" + s.charAt(0)));
+            String[] strparts2 = s.split("\\.");
+            int i = (Integer.parseInt(strparts2[0]));
             if(i > max) max = i;
         }
         return max + 1;
+    }
+    
+    public static Uzivatel getInstance(File file) throws FileNotFoundException {
+        String[] name = file.getName().split("_");
+        if (!name[0].equals("user")) {
+            throw new IllegalArgumentException("zadany soubor neopovida pozadavkum");
+        }  
+        if (!file.isFile()) {
+            throw new IllegalArgumentException("zadany soubor neexistuje");
+        }
+        String zahlavi = null;
+        try (Scanner s = new Scanner(file)) {
+            zahlavi = s.nextLine();
+        } 
+        if (!zahlaviValidator(zahlavi)) {
+            throw new IllegalArgumentException("zadany soubor neodpovida uzivateli");
+        }
+        return new Uzivatel(file, zahlavi); 
+    }
+    
+    private static boolean zahlaviValidator(String zahlavi) {
+        String[] str = zahlavi.split(";");
+        if (str.length > 4) return false;
+        int vek = Integer.parseInt(str[0]);
+        double vaha = Double.parseDouble(str[1]);
+        int vyska = Integer.parseInt(str[2]);
+        Pohlavi pohlavi = Pohlavi.valueOf(str[3]);
+        return !(vek < 0 || vaha <= 0 || vyska < 30 
+                || vek > 130 || vaha > 500 || vyska > 240
+                || pohlavi == null);
     }
 
     // vypocet bazalni metabolicke hodnoty kcal

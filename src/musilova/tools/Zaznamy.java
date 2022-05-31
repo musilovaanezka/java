@@ -17,7 +17,11 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import musilova.tools.aktivity.Casove;
+import musilova.tools.aktivity.Vzdalenostni;
 import musilova.tools.datumACas.Datum;
 
 /**
@@ -27,7 +31,7 @@ import musilova.tools.datumACas.Datum;
 public class Zaznamy {
 
     // zapis do souboru
-    public static void zapisAktivity(Uzivatel user, Aktivita aktivita, Datum datum) throws IOException {
+    private static void zapisAktivity(Uzivatel user, Aktivita aktivita, Datum datum) throws IOException {
 
         try ( BufferedWriter bw = Files.newBufferedWriter(user.getUserFile().toPath(), StandardOpenOption.APPEND, StandardOpenOption.WRITE)) {
             bw.newLine();
@@ -50,8 +54,17 @@ public class Zaznamy {
         }
         return lines;
     }
+    
+    public static List<String> cteniZaznamuDleData(Uzivatel user) throws IOException {
+        Datum date = new Datum();
+        return cteniZaznamuDleData(user, date);
+    }
+    public static List<String> cteniZaznamuDleData(Uzivatel user, int d, int m, int r) throws IOException {
+        Datum date = Datum.getInstance(d, m, r);
+        return cteniZaznamuDleData(user, date);
+    }
 
-    public static List<String> cteniZaznamuDleData(Uzivatel user, Datum date) throws FileNotFoundException, IOException {
+    private static List<String> cteniZaznamuDleData(Uzivatel user, Datum date) throws FileNotFoundException, IOException {
         List<String> lines = new ArrayList<String>();
         try (BufferedReader br = new BufferedReader(new FileReader(user.getUserFile()))) {
             br.readLine();
@@ -80,7 +93,12 @@ public class Zaznamy {
         }
         return lines;
     }
-    public static List<String> cteniZaznamuOdDoData(Uzivatel user, Datum startDate, Datum endDate) throws FileNotFoundException, IOException {
+    public static List<String> cteniZaznamuOdDoData(Uzivatel user, int sd, int sm, int sr, int ed, int em, int er) throws IOException {
+        Datum startDate = Datum.getInstance(sd, sm, sr);
+        Datum endDate = Datum.getInstance(ed, em, er);
+        return cteniZaznamuOdDoData(user, startDate, endDate);
+    }
+    private static List<String> cteniZaznamuOdDoData(Uzivatel user, Datum startDate, Datum endDate) throws FileNotFoundException, IOException {
         LocalDate start = Datum.prevod(startDate);
         LocalDate end = Datum.prevod(endDate);
         List<String> lines = new ArrayList<String>();
@@ -100,6 +118,11 @@ public class Zaznamy {
         }
         return lines;
     }
+    public static List<String> cteniZaznamuOdDoDleAktivity(Uzivatel user, int sd, int sm, int sr, int ed, int em, int er, String activityName) throws IOException {
+        Datum startDate = Datum.getInstance(sd, sm, sr);
+        Datum endDate = Datum.getInstance(ed, em, er);
+        return cteniZaznamuOdDoDleAktivity(user, startDate, endDate, activityName);
+    }
     public static List<String> cteniZaznamuOdDoDleAktivity(Uzivatel user, Datum startDate, Datum endDate, String activityName) throws IOException {
         List<String> lines = cteniZaznamuOdDoData(user, startDate, endDate);
         activityName = activityName.toLowerCase();
@@ -111,6 +134,56 @@ public class Zaznamy {
         }
         return lines;
     }
+    public static Uzivatel tvorbaUzivatele(int vek, double vaha, int vyska, int pohl) throws IOException, InterruptedException {
+        Uzivatel user = null;
+        try {
+            Uzivatel.Pohlavi pohlavi = null;
+            switch (pohl) {
+                case 1 -> pohlavi = Uzivatel.Pohlavi.ZENA;
+                case 2 -> pohlavi = Uzivatel.Pohlavi.MUZ;
+                case 3 -> pohlavi = Uzivatel.Pohlavi.JINE;
+                default -> throw new IllegalArgumentException("");
+            }
+            user = (Uzivatel.getInstance(vek, vaha, vyska, pohlavi));
+            
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
+        return user;
+    }
+    public static Uzivatel nacteniUzivatele(String cesta) {
+        File file = new File(cesta);
+        try {
+            return Uzivatel.getInstance(file);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+    public static void zapisCasAktivity(double minuty, int avHb, Uzivatel user, int den, int mesic, int rok) throws IOException {
+        Datum date = Datum.getInstance(den, mesic, rok);
+        zapisCasAktivity(minuty, avHb, user, date);
+    }
+    public static void zapisCasAktivity(double minuty, int avHb, Uzivatel user) throws IOException {
+        Datum date = new Datum();
+        zapisCasAktivity(minuty, avHb, user, date);
+    }
+    private static void zapisCasAktivity(double minuty, int avHb, Uzivatel user, Datum date) throws IOException{
+        Aktivita casova = Casove.getInstance(minuty, avHb, user);
+        zapisAktivity(user, casova, date);
+    }
+    
+    public static void zapisVzdAktivity(double minuty, double vzd, int avHb, Uzivatel user, int den, int mesic, int rok) throws IOException {
+        Datum date = Datum.getInstance(den, mesic, rok);
+        zapisVzdAktivity(minuty, vzd, avHb, user, date);
+    }
+    public static void zapisVzdAktivity(double minuty, double vzd, int avHb, Uzivatel user) throws IOException {
+        Datum date = new Datum();
+        zapisVzdAktivity(minuty, vzd, avHb, user, date);
+    }
+    private static void zapisVzdAktivity(double minuty, double vzd, int avHb, Uzivatel user, Datum date) throws IOException {
+        Aktivita vzdal = Vzdalenostni.getInstance(minuty, vzd, avHb, user);
+        zapisAktivity(user, vzdal, date);
+    }
     
     public static void main(String[] args) throws IOException, InterruptedException {
         Uzivatel karel = Uzivatel.getInstance(23, 60, 189, Uzivatel.Pohlavi.MUZ);
@@ -120,5 +193,6 @@ public class Zaznamy {
         //System.out.println(cteniZaznamuOdDoData(karel, Datum.getInstance(13, 9, 2021), Datum.getInstance(30, 5, 2022)));
         //System.out.println(cteniZaznamuDleAktivity(karel, "vzdalenostni"));
         System.out.println(cteniZaznamuOdDoDleAktivity(karel, Datum.getInstance(13, 9, 2021), Datum.getInstance(30, 5, 2022), "casove"));
+        System.out.println(karel.getUserFile().getName());
     }
 }
